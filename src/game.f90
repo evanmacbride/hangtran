@@ -1,4 +1,17 @@
+MODULE word_tools
+IMPLICIT NONE
+CONTAINS
+  FUNCTION GET_RANDOM_WORD(arr)
+    CHARACTER*5, DIMENSION(:), INTENT(IN) :: arr
+    CHARACTER(LEN = 5) :: GET_RANDOM_WORD
+    INTEGER :: index
+    index = CEILING(RAND(0) * SIZE(arr))
+    GET_RANDOM_WORD = arr(index)
+  END FUNCTION GET_RANDOM_WORD
+END MODULE
+
 PROGRAM game
+USE word_tools
 IMPLICIT NONE
   INTEGER :: i, reason, lines, index
   CHARACTER :: w
@@ -26,8 +39,7 @@ IMPLICIT NONE
 
   ! Print some random words
   DO i = 1, 5
-    index = CEILING(RAND(0) * lines)
-    PRINT *, words(index)
+    PRINT *, GET_RANDOM_WORD(words)
   END DO
 
   DEALLOCATE(words)
