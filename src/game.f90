@@ -26,6 +26,7 @@ IMPLICIT NONE
   CHARACTER(LEN = :), ALLOCATABLE :: secret, correct_letters
   LOGICAL :: guessed_right, won_round, lost_game
 
+  ! Beautiful ASCII art of the hanged man, sans gallows.
   CHARACTER*5, DIMENSION(1:5) :: draw_man
   draw_man(1) = " ( ) "
   draw_man(2) = "/`|`\"
@@ -35,7 +36,7 @@ IMPLICIT NONE
 
   ! Use a list of the top 5000 most common English words for
   ! secret words to guess.
-  OPEN(1, FILE = "../resources/top_5000.txt", STATUS = 'old')
+  OPEN(1, FILE = "resources/top_5000.txt", STATUS = 'old')
 
   ! Get the length of word list.
   lines = 0
@@ -57,6 +58,7 @@ IMPLICIT NONE
   CALL SRAND(i)
 
   DO WHILE (.not. lost_game)
+    ! Display current round.
     PRINT 100, round
     100 FORMAT('ROUND', 1I2)
     ! Pick a secret word and get a guess character from the user.
@@ -67,6 +69,7 @@ IMPLICIT NONE
         EXIT
       END IF
     END DO
+    ! Reallocate strings if this isn't the first round.
     IF (ALLOCATED(secret)) THEN
       DEALLOCATE(secret)
       DEALLOCATE(correct_letters)
@@ -84,7 +87,8 @@ IMPLICIT NONE
     won_round = .false.
     DO WHILE ((guess .ne. secret) .and. (num_wrong .lt. 5) .and. (.not. won_round))
       guessed_right = .false.
-      ! Show correct letters
+      ! Check if guessed letter is in secret. Fill in
+      ! correct_letters at the same time.
       DO i = 1, LEN(secret)
         IF (secret(i:i) .eq. guess) THEN
           correct_letters(i:i) = secret(i:i)
@@ -98,10 +102,11 @@ IMPLICIT NONE
         num_wrong = num_wrong + 1
       END IF
 
+      ! Show correctly guessed letters.
       PRINT *, ""
       PRINT *, correct_letters
       PRINT *, ""
-      ! Draw the hangman
+      ! Update the picture of the hanged man.
       DO i = 1, 5
         IF (i .le. num_wrong) THEN
           PRINT *, draw_man(i)
@@ -118,7 +123,8 @@ IMPLICIT NONE
         END IF
       END DO
 
-      ! Get a new guess, win round, or lose game.
+      ! Get a new guess, win round, or lose game. Update game
+      ! variables as appropriate.
       IF ((num_wrong .lt. 5) .and. (.not. won_round)) THEN
         guess = GET_USER_INPUT()
       ELSE IF (num_wrong .ge. 5) THEN
