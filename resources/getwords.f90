@@ -1,3 +1,5 @@
+! Extract five letter words from words_alpha.txt for use in
+! expert_game. easy_game uses a different, smaller word list.
 PROGRAM getWords
 IMPLICIT NONE
   INTEGER :: reason

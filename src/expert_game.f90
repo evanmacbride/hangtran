@@ -1,3 +1,6 @@
+! In expert mode, letters are not guessed one at a time. Entire
+! words are guessed, and correct letters are shown. This mode
+! exists only as a draft.
 MODULE tools
 IMPLICIT NONE
 CONTAINS
