@@ -57,6 +57,7 @@ IMPLICIT NONE
   CALL SYSTEM_CLOCK(i)
   CALL SRAND(i)
 
+  ! The game loop
   DO WHILE (.not. lost_game)
     ! Display current round.
     PRINT 100, round
@@ -84,6 +85,7 @@ IMPLICIT NONE
       correct_letters(i:i) = '_'
     END DO
 
+    ! The round loop
     won_round = .false.
     DO WHILE ((guess .ne. secret) .and. (num_wrong .lt. 5) .and. (.not. won_round))
       guessed_right = .false.
