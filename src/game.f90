@@ -19,12 +19,13 @@ END MODULE
 PROGRAM game
 USE tools
 IMPLICIT NONE
-  INTEGER :: i = 1, reason = 0, lines = 0, num_wrong = 0, round = 1
+  INTEGER :: i = 1, j = 1, reason = 0, lines = 0, num_wrong = 0, round = 1, hint_count = 0
   CHARACTER :: w, guess
   CHARACTER(LEN = 32), DIMENSION(:), ALLOCATABLE :: words(:)
   CHARACTER(LEN = 32) :: pick
   CHARACTER(LEN = :), ALLOCATABLE :: secret, correct_letters
-  LOGICAL :: guessed_right, won_round, lost_game
+  CHARACTER, DIMENSION(12) :: hint_letters, shuffled_hints
+  LOGICAL :: gave_hint, guessed_right, won_round, lost_game
 
   ! Beautiful ASCII art of the hanged man, sans gallows.
   CHARACTER*5, DIMENSION(1:5) :: draw_man
@@ -33,6 +34,10 @@ IMPLICIT NONE
   draw_man(3) = " _|_ "
   draw_man(4) = " | | "
   draw_man(5) = "_| |_"
+
+  ! Give one hint letter per word, but only choose letters from
+  ! this list.
+  hint_letters = (/ 'z','j','k','v','b','p','y','f','w','m','u','c' /)
 
   ! Use a list of the top 5000 most common English words for
   ! secret words to guess.
@@ -77,13 +82,41 @@ IMPLICIT NONE
     END IF
     ALLOCATE(CHARACTER(LEN=LEN(TRIM(PICK))) :: secret)
     secret = TRIM(pick)
-    guess = GET_USER_INPUT()
 
     ! Initialize correct_letters to blanks the length of secret
     ALLOCATE(CHARACTER(LEN=LEN(secret)) :: correct_letters)
     DO i = 1, LEN(correct_letters)
       correct_letters(i:i) = '_'
     END DO
+
+    ! Hints aren't really "shuffled," but shifting works just as
+    ! well here. Adapt this so the shift factor is random.
+    i = CEILING(RAND(0) * SIZE(hint_letters))
+    PRINT *, i
+    shuffled_hints = CSHIFT(hint_letters, i, 1)
+    ! Give the user one hint if the secret word has a letter in
+    ! hint_letters
+    OUTER: DO i = 1, UBOUND(shuffled_hints, 1)
+      ! I wanted to check against the gave_hint boolean, but that stopped the
+      ! program for some reason.
+      IF (hint_count < 1) THEN
+        INNER: DO j = 1, LEN(secret)
+          IF (shuffled_hints(i) .eq. secret(j:j)) THEN
+            correct_letters(j:j) = shuffled_hints(i)
+            hint_count = hint_count + 1
+          END IF
+        END DO INNER
+      END IF
+    END DO OUTER
+
+    ! Reset hint_count for next round
+    hint_count = 0
+
+    PRINT *, ""
+    PRINT *, "SECRET WORD: ", correct_letters
+    PRINT *, ""
+
+    guess = GET_USER_INPUT()
 
     ! The round loop
     won_round = .false.
