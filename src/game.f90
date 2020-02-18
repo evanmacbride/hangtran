@@ -92,7 +92,7 @@ IMPLICIT NONE
     ! Hints aren't really "shuffled," but shifting works just as
     ! well here. Adapt this so the shift factor is random.
     i = CEILING(RAND(0) * SIZE(hint_letters))
-    PRINT *, i
+    !PRINT *, i
     shuffled_hints = CSHIFT(hint_letters, i, 1)
     ! Give the user one hint if the secret word has a letter in
     ! hint_letters

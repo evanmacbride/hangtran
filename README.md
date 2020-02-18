@@ -56,3 +56,10 @@ starting with the
 [most frequent letters](https://en.wikipedia.org/wiki/Letter_frequency)
 for your first few guesses. After you get a few correct letters,
 try reasoning out the rest of the word.
+
+### Update (2/18/2020)
+
+Users are now shown the length of the secret word at the beginning of each
+round. If the word contains at least one less common letter, the game will give
+a hint by selecting one of those letters at random and revealing all instances
+of it within the secret word.
