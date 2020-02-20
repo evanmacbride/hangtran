@@ -14,6 +14,18 @@ CONTAINS
     PRINT *, "Guess a letter:"
     READ *, GET_USER_INPUT
   END FUNCTION GET_USER_INPUT
+
+  ! TODO: Fix this so it can be called multiple times for user's guesses.
+  SUBROUTINE TO_LOWER(word)
+    IMPLICIT NONE
+    INTEGER :: k
+    CHARACTER(LEN=*), INTENT(INOUT):: word
+    DO k = 1, LEN(word)
+      IF (IACHAR(word(k:k)) < 91) THEN
+        word(k:k) = (CHAR(IACHAR(word(k:k)) + 32))
+      END IF
+    END DO
+  END SUBROUTINE TO_LOWER
 END MODULE
 
 PROGRAM game
@@ -25,7 +37,7 @@ IMPLICIT NONE
   CHARACTER(LEN = 32) :: pick
   CHARACTER(LEN = :), ALLOCATABLE :: secret, correct_letters
   CHARACTER, DIMENSION(12) :: hint_letters, shuffled_hints
-  LOGICAL :: gave_hint, guessed_right, won_round, lost_game
+  LOGICAL :: guessed_right, won_round, lost_game!, gave_hint
 
   ! Beautiful ASCII art of the hanged man, sans gallows.
   CHARACTER*5, DIMENSION(1:5) :: draw_man
@@ -83,6 +95,12 @@ IMPLICIT NONE
     ALLOCATE(CHARACTER(LEN=LEN(TRIM(PICK))) :: secret)
     secret = TRIM(pick)
 
+    !secret = "CanADiAn"
+
+    !PRINT *, secret
+    CALL TO_LOWER(secret)
+    !PRINT *, secret
+
     ! Initialize correct_letters to blanks the length of secret
     ALLOCATE(CHARACTER(LEN=LEN(secret)) :: correct_letters)
     DO i = 1, LEN(correct_letters)
@@ -117,6 +135,8 @@ IMPLICIT NONE
     PRINT *, ""
 
     guess = GET_USER_INPUT()
+    CALL TO_LOWER(guess)
+    PRINT *, guess
 
     ! The round loop
     won_round = .false.
